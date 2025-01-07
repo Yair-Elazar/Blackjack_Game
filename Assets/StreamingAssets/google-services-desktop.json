@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "460177857111",
+    "project_id": "usersdata-dac4f",
+    "storage_bucket": "usersdata-dac4f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460177857111:android:d11c7e0aeb8b72f3c12112",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.Firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiN8ejex_zNW39EWmwYRESOeRtQxo5tLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

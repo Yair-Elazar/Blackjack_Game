@@ -28,16 +28,22 @@ public class Menu : MonoBehaviour
 
     private void SignUpClicked()
     {
+        SceneManager.LoadSceneAsync(2);
+        /*
         mainTilte.SetActive(false);
         loginUI.SetActive(false);
         registerUI.SetActive(true);
+        */
     }
 
     private void LoginClicked()
     {
+        SceneManager.LoadSceneAsync(2);
+        /*
         mainTilte.SetActive(false);
         loginUI.SetActive(true);
         registerUI.SetActive(false);
+        */
     }
 
     public void backToMenu()

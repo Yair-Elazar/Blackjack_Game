@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
+//TODO finish login and register pages + datebase
 public class Menu : MonoBehaviour
 {
     public Button login;
@@ -38,12 +40,12 @@ public class Menu : MonoBehaviour
 
     private void LoginClicked()
     {
-        SceneManager.LoadSceneAsync(2);
-        /*
+        //SceneManager.LoadSceneAsync(2);
+        
         mainTilte.SetActive(false);
         loginUI.SetActive(true);
         registerUI.SetActive(false);
-        */
+        
     }
 
     public void backToMenu()

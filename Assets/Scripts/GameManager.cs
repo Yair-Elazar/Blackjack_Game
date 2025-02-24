@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public Button bet100Btn;
     public Button bet200Btn;
 
-    private bool timerRunning;
+    //private bool timerRunning;
     private float timeLeft = 30f;
     public Text timerText;
 
@@ -75,7 +75,9 @@ public class GameManager : MonoBehaviour
         playerScript.ResetHand();
         dealerScript.ResetHand();
 
+     
         mainText.gameObject.SetActive(false);
+
         // Hide the dealer score at the start of the deal
         dealerScoreText.gameObject.SetActive(false);
 
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour
         GameObject.Find("Deck").GetComponent<DeckScript>().Shuffle();
         playerScript.StarHand();
         dealerScript.StarHand();
+
 
         // Update the score display
         scoreText.text = "HAND: " + playerScript.handValue.ToString();
@@ -99,7 +102,7 @@ public class GameManager : MonoBehaviour
         bet50Btn.enabled = false;
         bet100Btn.enabled = false;
         bet200Btn.enabled = false;
-        //Add Double and spilt button
+        //TODO Add Double and spilt button
 
         // Set standard pot size
         pot *= 2;
@@ -346,6 +349,7 @@ public class GameManager : MonoBehaviour
     }
     */
 
+    //TODO Timer
     private void UpdateTimerUI()
     {
         int seconds = Mathf.FloorToInt(timeLeft % 60); // Get seconds

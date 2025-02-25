@@ -72,4 +72,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 google-services.json
+Assets/StreamingAssets/google-services.json
 Assets/Firebase/Plugins/x86_64

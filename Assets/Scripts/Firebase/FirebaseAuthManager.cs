@@ -11,6 +11,7 @@ using UnityEditor.PackageManager;
 
 public class FirebaseAuthManager : MonoBehaviour
 {
+
     // Firebase variable
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;

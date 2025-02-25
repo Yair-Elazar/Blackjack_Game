@@ -3,7 +3,6 @@
   <string name="gcm_defaultSenderId" translatable="false">1030658142195</string>
   <string name="google_storage_bucket" translatable="false">blackjack-firebase-97fb2.firebasestorage.app</string>
   <string name="project_id" translatable="false">blackjack-firebase-97fb2</string>
-  <string name="google_api_key" translatable="false">AIzaSyByY6PL6TzMr7f51LQpSkkycAGU_LH_Y4o</string>
   <string name="google_crash_reporting_api_key" translatable="false">AIzaSyByY6PL6TzMr7f51LQpSkkycAGU_LH_Y4o</string>
   <string name="google_app_id" translatable="false">1:1030658142195:android:2e7f0112d2d7293894ec86</string>
 </resources>

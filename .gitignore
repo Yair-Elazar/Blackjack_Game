@@ -63,7 +63,11 @@ crashlytics-build.properties
 google-services.json
 Assets/StreamingAssets/google-services.json
 Assets/Firebase/Plugins/x86_64/*
+<<<<<<< HEAD
 /[Aa]ssets/[Ss]treamingAssets
 /[Aa]ssets/[Ss]treamingAssets/*
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 /[Aa]ssets/Plugins/Android/FirebaseApp.androidlib/res/values/google-services.xml
+=======
+/path/to/your/strings.xml  # Adjust the path based on the actual location
+>>>>>>> dba6ded63847c1224a9e236cedcea7c87c05bc90

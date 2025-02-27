@@ -123,7 +123,7 @@ public class FirebaseManager : MonoBehaviour
     {
         auth.SignOut();
         UIManager.Instance.OpenLoginPanel();
-        
+        ClearLoginFeilds();
     }
 
     private IEnumerator LoginAsync(string email, string password)
@@ -328,6 +328,7 @@ public class FirebaseManager : MonoBehaviour
         {
             //Data has been retrieved
             DataSnapshot snapshot = DBTask.Result;
+            loginText.text = snapshot.Child("amount").Value.ToString();
         }
     }
 

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1030658142195",
+    "firebase_url": "https://blackjack-firebase-97fb2-default-rtdb.firebaseio.com",
     "project_id": "blackjack-firebase-97fb2",
     "storage_bucket": "blackjack-firebase-97fb2.firebasestorage.app"
   },
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyByY6PL6TzMr7f51LQpSkkycAGU_LH_Y4o"
+          "current_key": "AIzaSyBmVvKo09UjXg-9m7J_XX-ENgNgDw_FXKA"
         }
       ],
       "services": {

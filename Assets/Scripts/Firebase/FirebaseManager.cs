@@ -8,16 +8,22 @@ using System;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEditor.PackageManager;
+using static UnityEngine.Rendering.DebugUI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
+using System.Threading.Tasks;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+using UnityEngine.UIElements;
 
-public class FirebaseAuthManager : MonoBehaviour
+public class FirebaseManager : MonoBehaviour
 {
 
     // Firebase variable
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
+    public static FirebaseManager Instance { get; private set; }
     public FirebaseAuth auth;
     public FirebaseUser user;
-    public DatabaseReference DB;
+    public DatabaseReference DBreference;
 
     // Login Variables
     [Space]
@@ -36,36 +42,46 @@ public class FirebaseAuthManager : MonoBehaviour
 
     [Space]
     [Header("UserData")]
-    public InputField userName;
-    public InputField userAmount;
-    public InputField gamePlay;
-    public InputField userWins;
-    public InputField userLoses;
+    private InputField userName;
+    private Text userAmount;
+    private Text userGamesPlayed;
+    private Text userWins;
+    private Text userLoses;
 
 
     private void Awake()
     {
-        // Check that all of the necessary dependencies for firebase are present on the system
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        if (Instance == null)
         {
-            dependencyStatus = task.Result;
+            Instance = this;
+            DontDestroyOnLoad(gameObject); //Keeps FirebaseManager alive across scenes
 
-            if (dependencyStatus == DependencyStatus.Available)
+            // Check that all of the necessary dependencies for firebase are present on the system
+            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
-                InitializeFirebase();
-            }
-            else
-            {
-                Debug.LogError("Could not resolve all firebase dependencies: " + dependencyStatus);
-            }
-        });
+                dependencyStatus = task.Result;
+
+                if (dependencyStatus == DependencyStatus.Available)
+                {
+                    InitializeFirebase();
+                }
+                else
+                {
+                    Debug.LogError("Could not resolve all firebase dependencies: " + dependencyStatus);
+                }
+            });
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void InitializeFirebase()
     {
         //Set the default instance object
         auth = FirebaseAuth.DefaultInstance;
-
+        DBreference = FirebaseDatabase.DefaultInstance.RootReference;
         auth.StateChanged += AuthStateChanged;
         AuthStateChanged(this, null);
     }
@@ -103,6 +119,12 @@ public class FirebaseAuthManager : MonoBehaviour
         StartCoroutine(RegisterAsync(nameRegisterField.text, emailRegisterField.text, passwordRegisterField.text, confirmPasswordRegisterField.text));
     }
 
+    public void SignOutButton()
+    {
+        auth.SignOut();
+        UIManager.Instance.OpenLoginPanel();
+        
+    }
 
     private IEnumerator LoginAsync(string email, string password)
     {
@@ -147,11 +169,12 @@ public class FirebaseAuthManager : MonoBehaviour
 
             Debug.LogFormat("{0} You Are Successfully Logged In", user.DisplayName);
             loginText.text = "Logged In";
+            StartCoroutine(LoadUserData());
 
             yield return new WaitForSeconds(2);
 
             //References.userName = user.DisplayName;
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
+            //UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
         }
     }
 
@@ -268,5 +291,175 @@ public class FirebaseAuthManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ClearLoginFeilds()
+    {
+        emailLoginField.text = "";
+        passwordLoginField.text = "";
+    }
+
+    public void ClearRegisterFeilds()
+    {
+        nameRegisterField.text = "";
+        emailRegisterField.text = "";
+        passwordRegisterField.text = "";
+        confirmPasswordRegisterField.text = "";
+    }
+
+    private IEnumerator LoadUserData()
+    {
+        //Get the currently logged in user data
+        Task<DataSnapshot> DBTask = DBreference.Child("users").Child(user.UserId).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else if (DBTask.Result.Value == null)
+        {
+            //No data exists yet
+            newUserData();
+            //userName.text = user.DisplayName;
+        }
+        else
+        {
+            //Data has been retrieved
+            DataSnapshot snapshot = DBTask.Result;
+        }
+    }
+
+    private void newUserData()
+    {
+        StartCoroutine(UpdateUsernameAuth(user.DisplayName));
+        StartCoroutine(UpdateUsernameDatabase(user.DisplayName));
+        StartCoroutine(Amount(1000));
+        StartCoroutine(GamesPlayed(0));
+        StartCoroutine(Wins(0));
+        StartCoroutine(Loses(0));
+    }
+
+    private IEnumerator UpdateUsernameAuth(string _username)
+    {
+        //Create a user profile and set the username
+        UserProfile profile = new UserProfile { DisplayName = _username };
+
+        //Call the Firebase auth update user profile function passing the profile with the username
+        Task ProfileTask = user.UpdateUserProfileAsync(profile);
+        //Wait until the task completes
+        yield return new WaitUntil(predicate: () => ProfileTask.IsCompleted);
+
+        if (ProfileTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {ProfileTask.Exception}");
+        }
+        else
+        {
+            //Auth username is now updated
+        }
+    }
+
+    private IEnumerator UpdateUsernameDatabase(string _username)
+    {
+        //Set the currently logged in user username in the database
+        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("username").SetValueAsync(_username);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+            //Database username is now updated
+        }
+    }
+
+    private IEnumerator Amount(int amount)
+    {
+        //Set the currently logged in user xp
+        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("amount").SetValueAsync(amount);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+            //userAmount.text = amount.ToString();
+        }
+    }
+
+    private IEnumerator GamesPlayed(int games)
+    {
+        //Set the currently logged in user xp
+        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("games").SetValueAsync(games);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+            //userGamesPlayed.text = games.ToString();
+        }
+    }
+
+    private IEnumerator Wins(int wins)
+    {
+        //Set the currently logged in user kills
+        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("wins").SetValueAsync(wins);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+            //userWins.text = wins.ToString();
+        }
+    }
+
+    private IEnumerator Loses(int loses)
+    {
+        //Set the currently logged in user deaths
+        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("loses").SetValueAsync(loses);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+            //userLoses.text = loses.ToString();
+        }
+    }
+
+
+    public void SaveGameState(string userId, int amount, int gamesPlayed, int wins, int loses)
+    {
+        if (DBreference != null)
+        {
+            StartCoroutine(Amount(amount));
+            StartCoroutine(GamesPlayed(gamesPlayed)); ;
+            StartCoroutine(Wins(wins));
+            StartCoroutine(Loses(loses));
+        }
+        else
+        {
+            Debug.LogError("Database reference is null!");
+        }
+        
     }
 }

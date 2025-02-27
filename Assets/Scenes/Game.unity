@@ -1038,6 +1038,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 274065965}
   m_CullTransparentMesh: 1
+--- !u!1 &283515846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 283515848}
+  - component: {fileID: 283515847}
+  m_Layer: 0
+  m_Name: BetManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &283515847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283515846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79574088e5d0407985025f10d847f34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerScript: {fileID: 1633346123}
+  betsText: {fileID: 335702239}
+  cashText: {fileID: 274065967}
+--- !u!4 &283515848
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283515846}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &332128293
 GameObject:
   m_ObjectHideFlags: 0
@@ -3079,15 +3126,13 @@ MonoBehaviour:
   bet50Btn: {fileID: 1169856731}
   bet100Btn: {fileID: 743873353}
   bet200Btn: {fileID: 1001020388}
-  timerText: {fileID: 2010161533}
-  playerScript: {fileID: 1633346123}
-  dealerScript: {fileID: 366351996}
   scoreText: {fileID: 167632220}
   dealerScoreText: {fileID: 1734715795}
-  betsText: {fileID: 335702239}
-  cashText: {fileID: 274065967}
   mainText: {fileID: 177713976}
   hideCard: {fileID: 150972265}
+  playerScript: {fileID: 1633346123}
+  dealerScript: {fileID: 366351996}
+  betManager: {fileID: 283515847}
 --- !u!4 &1016131656
 Transform:
   m_ObjectHideFlags: 0
@@ -4721,6 +4766,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1016131656}
+  - {fileID: 283515848}
   - {fileID: 130421040}
   - {fileID: 771818558}
   - {fileID: 1142578656}

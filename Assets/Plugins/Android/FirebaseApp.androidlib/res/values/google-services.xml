@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="firebase_database_url" translatable="false">https://blackjack-firebase-97fb2-default-rtdb.firebaseio.com</string>
   <string name="gcm_defaultSenderId" translatable="false">1030658142195</string>
   <string name="google_storage_bucket" translatable="false">blackjack-firebase-97fb2.firebasestorage.app</string>
   <string name="project_id" translatable="false">blackjack-firebase-97fb2</string>
+  <string name="google_api_key" translatable="false">AIzaSyBmVvKo09UjXg-9m7J_XX-ENgNgDw_FXKA</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBmVvKo09UjXg-9m7J_XX-ENgNgDw_FXKA</string>
   <string name="google_app_id" translatable="false">1:1030658142195:android:2e7f0112d2d7293894ec86</string>
 </resources>

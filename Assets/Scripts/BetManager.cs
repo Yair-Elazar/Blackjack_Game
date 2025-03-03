@@ -34,7 +34,7 @@ public class BetManager : MonoBehaviour
         UpdateUI();
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         betsText.text = "BET: $" + Pot;
         cashText.text = "BANK: $" + playerScript.GetMoney().ToString();

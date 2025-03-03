@@ -169,12 +169,12 @@ public class FirebaseManager : MonoBehaviour
 
             Debug.LogFormat("{0} You Are Successfully Logged In", user.DisplayName);
             loginText.text = "Logged In";
-            StartCoroutine(LoadUserData());
+            StartCoroutine(LoadUserData(user.UserId));
 
             yield return new WaitForSeconds(2);
 
             //References.userName = user.DisplayName;
-            //UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
         }
     }
 
@@ -307,10 +307,10 @@ public class FirebaseManager : MonoBehaviour
         confirmPasswordRegisterField.text = "";
     }
 
-    private IEnumerator LoadUserData()
+    private IEnumerator LoadUserData(string userId)
     {
         //Get the currently logged in user data
-        Task<DataSnapshot> DBTask = DBreference.Child("users").Child(user.UserId).GetValueAsync();
+        Task<DataSnapshot> DBTask = DBreference.Child("users").Child(userId).GetValueAsync();
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -328,7 +328,14 @@ public class FirebaseManager : MonoBehaviour
         {
             //Data has been retrieved
             DataSnapshot snapshot = DBTask.Result;
-            loginText.text = snapshot.Child("amount").Value.ToString();
+
+            //Tranport to method
+            UserData.userId = user.UserId;
+            UserData.userName = snapshot.Child("username").Value.ToString();
+            UserData.amount = int.Parse(snapshot.Child("amount").Value.ToString());
+            UserData.games = int.Parse(snapshot.Child("games").Value.ToString());
+            UserData.wins = int.Parse(snapshot.Child("wins").Value.ToString());
+            UserData.loses = int.Parse(snapshot.Child("loses").Value.ToString());
         }
     }
 
@@ -336,10 +343,10 @@ public class FirebaseManager : MonoBehaviour
     {
         StartCoroutine(UpdateUsernameAuth(user.DisplayName));
         StartCoroutine(UpdateUsernameDatabase(user.DisplayName));
-        StartCoroutine(Amount(1000));
-        StartCoroutine(GamesPlayed(0));
-        StartCoroutine(Wins(0));
-        StartCoroutine(Loses(0));
+        StartCoroutine(Amount(user.UserId, 1000));
+        StartCoroutine(GamesPlayed(user.UserId, 0));
+        StartCoroutine(Wins(user.UserId, 0));
+        StartCoroutine(Loses(user.UserId, 0));
     }
 
     private IEnumerator UpdateUsernameAuth(string _username)
@@ -379,10 +386,10 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Amount(int amount)
+    private IEnumerator Amount(string userId, int amount)
     {
         //Set the currently logged in user xp
-        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("amount").SetValueAsync(amount);
+        Task DBTask = DBreference.Child("users").Child(userId).Child("amount").SetValueAsync(amount);
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -396,10 +403,10 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator GamesPlayed(int games)
+    private IEnumerator GamesPlayed(string userId, int games)
     {
         //Set the currently logged in user xp
-        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("games").SetValueAsync(games);
+        Task DBTask = DBreference.Child("users").Child(userId).Child("games").SetValueAsync(games);
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -413,10 +420,10 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Wins(int wins)
+    private IEnumerator Wins(string userId, int wins)
     {
         //Set the currently logged in user kills
-        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("wins").SetValueAsync(wins);
+        Task DBTask = DBreference.Child("users").Child(userId).Child("wins").SetValueAsync(wins);
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -430,10 +437,10 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Loses(int loses)
+    private IEnumerator Loses(string userId, int loses)
     {
         //Set the currently logged in user deaths
-        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("loses").SetValueAsync(loses);
+        Task DBTask = DBreference.Child("users").Child(userId).Child("loses").SetValueAsync(loses);
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -452,10 +459,10 @@ public class FirebaseManager : MonoBehaviour
     {
         if (DBreference != null)
         {
-            StartCoroutine(Amount(amount));
-            StartCoroutine(GamesPlayed(gamesPlayed)); ;
-            StartCoroutine(Wins(wins));
-            StartCoroutine(Loses(loses));
+            StartCoroutine(Amount(userId, amount));
+            StartCoroutine(GamesPlayed(userId,gamesPlayed)); ;
+            StartCoroutine(Wins(userId, wins));
+            StartCoroutine(Loses(userId, loses));
         }
         else
         {

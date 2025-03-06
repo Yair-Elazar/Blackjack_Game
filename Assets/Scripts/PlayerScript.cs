@@ -25,19 +25,40 @@ public class PlayerScript : MonoBehaviour
     List<CardScript> aceList = new List<CardScript>();
 
 
-    public void StarHand()
+    public int[] playerHand = new int[2];
+    public int playerCardIndex = 0;
+    public int[] dealerHand = new int[12];
+    public int dealerCardIndex = 0;
+
+    public void StarHand(bool isPlayer)
     {
-        GetCard();
-        GetCard();
+        GetCard(isPlayer);
+        GetCard(isPlayer);
     }
 
     // Add a hand to player/dealer's hand
-    public int GetCard()
+    public int GetCard(bool isPlayer)
     {
         //Get a card, use deal card to assign sprite and value to card on table
         int cardValue = deckScript.DealCard(hand[cardIndex].GetComponent<CardScript>());
         // Show card on game screen
         hand[cardIndex].GetComponent<Renderer>().enabled = true;
+
+        if(isPlayer)
+        {
+            if(playerCardIndex <= 1)
+            {
+                playerHand[playerCardIndex] = cardValue;
+                playerCardIndex++;
+            }
+            
+        }
+        else
+        {
+            dealerHand[dealerCardIndex] = cardValue;
+            dealerCardIndex++;
+        }
+
         // Add card value to runnig total of the hand
         handValue += cardValue;
         // If value is 1, it is an ace
@@ -45,6 +66,7 @@ public class PlayerScript : MonoBehaviour
         {
             aceList.Add(hand[cardIndex].GetComponent<CardScript>());
         }
+
         // Check if we should use an 11 instead of a 1
         AceCheck();
         cardIndex++;
@@ -100,5 +122,9 @@ public class PlayerScript : MonoBehaviour
         cardIndex = 0;
         handValue = 0;
         aceList = new List<CardScript>();
+        playerCardIndex = 0;
+        dealerCardIndex = 0;
+        playerHand = new int[2];
+        dealerHand = new int[12];
     }
 }

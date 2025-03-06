@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     public PlayerScript playerScript;
     public PlayerScript dealerScript;
     public BetManager betManager;
-   
+    private bool firstAction = true;
+    private bool roundSaved = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -62,9 +63,15 @@ public class GameManager : MonoBehaviour
         dealerScoreText.gameObject.SetActive(false);
 
         GameObject.Find("Deck").GetComponent<DeckScript>().Shuffle();
-        playerScript.StarHand();
-        dealerScript.StarHand();
+
+        playerScript.StarHand(true);
+        dealerScript.StarHand(false);
+
+        UserData.userHand = playerScript.playerHand;
+        UserData.dealerCard = dealerScript.dealerHand;
         UserData.games += 1;
+
+
         // Update the score display
         UpdateScoreUI();
         betManager.DoublePot();
@@ -78,13 +85,24 @@ public class GameManager : MonoBehaviour
 
     private void HitClicked()
     {
-        playerScript.GetCard();
+        if (firstAction)
+        {
+            UserData.userAction = "Hit";
+            firstAction = false;
+        }
+
+        playerScript.GetCard(true);
         UpdateScoreUI();
         RoundOver("player");
     }
     
     private void StandClicked()
     {
+        if (firstAction)
+        {
+            UserData.userAction = "Stand";
+            firstAction = false;
+        }
         DealerTurn();
     }
 
@@ -107,7 +125,7 @@ public class GameManager : MonoBehaviour
         // TODO show the cards one by one 
         while (dealerScript.handValue < 17)
         {
-            dealerScript.GetCard();
+            dealerScript.GetCard(false);
             UpdateScoreUI();
             RoundOver("dealerHit");
             StartCoroutine(wait());
@@ -123,6 +141,11 @@ public class GameManager : MonoBehaviour
 
     private void RoundOver(String name)
     {
+        if (roundSaved)
+        {
+            return; // Prevent multiple saves
+        }
+
         bool roundOver = true;
 
         // if the player bust/win after deal/hit button
@@ -131,6 +154,7 @@ public class GameManager : MonoBehaviour
             if (playerScript.handValue > 21)
             {
                 mainText.text = "Bust: Dealer Win";
+                UserData.outcome = "Loss";
                 UserData.amount = playerScript.GetMoney();
                 UserData.loses += 1;
             }
@@ -138,6 +162,11 @@ public class GameManager : MonoBehaviour
             {
                 mainText.text = "Blackjack!! You Win";
                 playerScript.AdjustMoney(betManager.Pot);
+                if(UserData.userAction == null)
+                {
+                    UserData.userAction = "User Blackjack";
+                }
+                UserData.outcome = "Win";
                 UserData.wins += 1;
                 UserData.amount = playerScript.GetMoney();
             }
@@ -152,6 +181,11 @@ public class GameManager : MonoBehaviour
             if (dealerScript.handValue == 21)
             {
                 mainText.text = "Dealer Win!! Blackjack";
+                UserData.outcome = "Loss";
+                if (UserData.userAction == null)
+                {
+                    UserData.userAction = "Dealer Blackjack";
+                }
                 UserData.loses += 1;
                 UserData.amount = playerScript.GetMoney();
             }
@@ -159,6 +193,7 @@ public class GameManager : MonoBehaviour
             else if (dealerScript.handValue > 21)
             {
                 mainText.text = "Dealer Bust: You Win - Dealer Hand: " + dealerScript.handValue.ToString();
+                UserData.outcome = "Win";
                 playerScript.AdjustMoney(betManager.Pot);
                 UserData.wins += 1;
                 UserData.amount = playerScript.GetMoney();
@@ -167,13 +202,15 @@ public class GameManager : MonoBehaviour
             else if (dealerScript.handValue > playerScript.handValue)
             {
                 mainText.text = "Dealer Wins - Dealer Hand: " + dealerScript.handValue.ToString();
+                UserData.outcome = "Loss";
                 UserData.loses += 1;
                 UserData.amount = playerScript.GetMoney();
             }
 
             else if (playerScript.handValue > dealerScript.handValue && dealerScript.handValue >= 17)
             {
-                mainText.text = "You Win!! - Dealer Hand: " + dealerScript.handValue.ToString(); 
+                mainText.text = "You Win!! - Dealer Hand: " + dealerScript.handValue.ToString();
+                UserData.outcome = "Win";
                 playerScript.AdjustMoney(betManager.Pot);
                 UserData.wins += 1;
                 UserData.amount = playerScript.GetMoney();
@@ -182,6 +219,7 @@ public class GameManager : MonoBehaviour
             else if (playerScript.handValue == dealerScript.handValue && dealerScript.handValue >= 17)
             {
                 mainText.text = "Push: Bets returned";
+                UserData.outcome = "Draw";
                 playerScript.AdjustMoney(betManager.Pot / 2);
                 UserData.amount = playerScript.GetMoney();
             }
@@ -193,20 +231,22 @@ public class GameManager : MonoBehaviour
 
         if (roundOver)
         {
-            FirebaseManager.Instance.SaveGameState(UserData.userId, UserData.amount, UserData.games, UserData.wins, UserData.loses);
+            roundSaved = true;
+            FirestoreManager.Instance.SaveGameData(UserData.userHand, UserData.dealerCard[0], UserData.userAction, UserData.outcome);
+            //FirebaseManager.Instance.SaveGameState(UserData.userId, UserData.amount, UserData.games, UserData.wins, UserData.loses);
             ResetRound();
         }
     }
 
     private void ResetRound()
     {
+        firstAction = true;
+        roundSaved = false;
         ToggleGameButtons(false);
         mainText.gameObject.SetActive(true);
         dealerScoreText.gameObject.SetActive(true);
         hideCard.GetComponent<Renderer>().enabled = false;
         betManager.ResetBet();
-        wait();
-        
     }
 
 

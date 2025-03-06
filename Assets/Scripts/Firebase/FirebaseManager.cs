@@ -4,15 +4,9 @@ using Firebase.Auth;
 using Firebase.Database;
 using System.Collections;
 using UnityEngine.UI;
-using System;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
-using UnityEditor.PackageManager;
-using static UnityEngine.Rendering.DebugUI;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 using System.Threading.Tasks;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
-using UnityEngine.UIElements;
+using Firebase.Firestore;
+using System;
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -24,6 +18,7 @@ public class FirebaseManager : MonoBehaviour
     public FirebaseAuth auth;
     public FirebaseUser user;
     public DatabaseReference DBreference;
+    
 
     // Login Variables
     [Space]
@@ -169,7 +164,7 @@ public class FirebaseManager : MonoBehaviour
 
             Debug.LogFormat("{0} You Are Successfully Logged In", user.DisplayName);
             loginText.text = "Logged In";
-            StartCoroutine(LoadUserData(user.UserId));
+            //StartCoroutine(LoadUserData(user.UserId));
 
             yield return new WaitForSeconds(2);
 
@@ -177,7 +172,6 @@ public class FirebaseManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
         }
     }
-
 
     private IEnumerator RegisterAsync(string name, string email, string password, string confirmPassword)
     {
@@ -307,47 +301,6 @@ public class FirebaseManager : MonoBehaviour
         confirmPasswordRegisterField.text = "";
     }
 
-    private IEnumerator LoadUserData(string userId)
-    {
-        //Get the currently logged in user data
-        Task<DataSnapshot> DBTask = DBreference.Child("users").Child(userId).GetValueAsync();
-
-        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
-
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else if (DBTask.Result.Value == null)
-        {
-            //No data exists yet
-            newUserData();
-            //userName.text = user.DisplayName;
-        }
-        else
-        {
-            //Data has been retrieved
-            DataSnapshot snapshot = DBTask.Result;
-
-            //Tranport to method
-            UserData.userId = user.UserId;
-            UserData.userName = snapshot.Child("username").Value.ToString();
-            UserData.amount = int.Parse(snapshot.Child("amount").Value.ToString());
-            UserData.games = int.Parse(snapshot.Child("games").Value.ToString());
-            UserData.wins = int.Parse(snapshot.Child("wins").Value.ToString());
-            UserData.loses = int.Parse(snapshot.Child("loses").Value.ToString());
-        }
-    }
-
-    private void newUserData()
-    {
-        StartCoroutine(UpdateUsernameAuth(user.DisplayName));
-        StartCoroutine(UpdateUsernameDatabase(user.DisplayName));
-        StartCoroutine(Amount(user.UserId, 1000));
-        StartCoroutine(GamesPlayed(user.UserId, 0));
-        StartCoroutine(Wins(user.UserId, 0));
-        StartCoroutine(Loses(user.UserId, 0));
-    }
 
     private IEnumerator UpdateUsernameAuth(string _username)
     {
@@ -369,105 +322,168 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator UpdateUsernameDatabase(string _username)
+
+    internal FirebaseUser GetCurrentUser()
     {
-        //Set the currently logged in user username in the database
-        Task DBTask = DBreference.Child("users").Child(user.UserId).Child("username").SetValueAsync(_username);
-
-        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
-
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else
-        {
-            //Database username is now updated
-        }
+        return auth.CurrentUser;
     }
 
-    private IEnumerator Amount(string userId, int amount)
+}
+
+
+
+
+/*
+private IEnumerator LoadUserData(string userId)
+{
+    //Get the currently logged in user data
+    Task<DataSnapshot> DBTask = DBreference.Child("users").Child(userId).GetValueAsync();
+
+    yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+    if (DBTask.Exception != null)
     {
-        //Set the currently logged in user xp
-        Task DBTask = DBreference.Child("users").Child(userId).Child("amount").SetValueAsync(amount);
-
-        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
-
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else
-        {
-            //userAmount.text = amount.ToString();
-        }
+        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
     }
-
-    private IEnumerator GamesPlayed(string userId, int games)
+    else if (DBTask.Result.Value == null)
     {
-        //Set the currently logged in user xp
-        Task DBTask = DBreference.Child("users").Child(userId).Child("games").SetValueAsync(games);
-
-        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
-
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else
-        {
-            //userGamesPlayed.text = games.ToString();
-        }
+        //No data exists yet
+        newUserData();
+        //userName.text = user.DisplayName;
     }
-
-    private IEnumerator Wins(string userId, int wins)
+    else
     {
-        //Set the currently logged in user kills
-        Task DBTask = DBreference.Child("users").Child(userId).Child("wins").SetValueAsync(wins);
+        //Data has been retrieved
+        DataSnapshot snapshot = DBTask.Result;
 
-        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+        UserData.userId = user.UserId;
+        UserData.amount = int.Parse(snapshot.Child("amount").Value.ToString());
+        //Tranport to method
 
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else
-        {
-            //userWins.text = wins.ToString();
-        }
-    }
+        UserData.userId = user.UserId;
+        UserData.userName = snapshot.Child("username").Value.ToString();
+        UserData.amount = int.Parse(snapshot.Child("amount").Value.ToString());
+        UserData.games = int.Parse(snapshot.Child("games").Value.ToString());
+        UserData.wins = int.Parse(snapshot.Child("wins").Value.ToString());
+        UserData.loses = int.Parse(snapshot.Child("loses").Value.ToString());
 
-    private IEnumerator Loses(string userId, int loses)
-    {
-        //Set the currently logged in user deaths
-        Task DBTask = DBreference.Child("users").Child(userId).Child("loses").SetValueAsync(loses);
-
-        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
-
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else
-        {
-            //userLoses.text = loses.ToString();
-        }
-    }
-
-
-    public void SaveGameState(string userId, int amount, int gamesPlayed, int wins, int loses)
-    {
-        if (DBreference != null)
-        {
-            StartCoroutine(Amount(userId, amount));
-            StartCoroutine(GamesPlayed(userId,gamesPlayed)); ;
-            StartCoroutine(Wins(userId, wins));
-            StartCoroutine(Loses(userId, loses));
-        }
-        else
-        {
-            Debug.LogError("Database reference is null!");
-        }
-        
     }
 }
+
+
+private void newUserData()
+{
+    StartCoroutine(UpdateUsernameAuth(user.DisplayName));
+    //StartCoroutine(UpdateUsernameDatabase(user.DisplayName));
+   //StartCoroutine(Amount(user.UserId, 1000));
+    //StartCoroutine(GamesPlayed(user.UserId, 0));
+}
+
+*/
+
+
+/*
+private IEnumerator UpdateUsernameDatabase(string _username)
+{
+    //Set the currently logged in user username in the database
+    Task DBTask = DBreference.Child("users").Child(user.UserId).Child("username").SetValueAsync(_username);
+
+    yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+    if (DBTask.Exception != null)
+    {
+        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+    }
+    else
+    {
+        //Database username is now updated
+    }
+}
+
+private IEnumerator Amount(string userId, int amount)
+{
+    //Set the currently logged in user xp
+    Task DBTask = DBreference.Child("users").Child(userId).Child("amount").SetValueAsync(amount);
+
+    yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+    if (DBTask.Exception != null)
+    {
+        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+    }
+    else
+    {
+        //userAmount.text = amount.ToString();
+    }
+}
+
+private IEnumerator GamesPlayed(string userId, int games)
+{
+    //Set the currently logged in user xp
+    Task DBTask = DBreference.Child("users").Child(userId).Child("games").SetValueAsync(games);
+
+    yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+    if (DBTask.Exception != null)
+    {
+        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+    }
+    else
+    {
+        //userGamesPlayed.text = games.ToString();
+    }
+}
+
+private IEnumerator Wins(string userId, int wins)
+{
+    //Set the currently logged in user kills
+    Task DBTask = DBreference.Child("users").Child(userId).Child("wins").SetValueAsync(wins);
+
+    yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+    if (DBTask.Exception != null)
+    {
+        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+    }
+    else
+    {
+        //userWins.text = wins.ToString();
+    }
+}
+
+private IEnumerator Loses(string userId, int loses)
+{
+    //Set the currently logged in user deaths
+    Task DBTask = DBreference.Child("users").Child(userId).Child("loses").SetValueAsync(loses);
+
+    yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+    if (DBTask.Exception != null)
+    {
+        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+    }
+    else
+    {
+        //userLoses.text = loses.ToString();
+    }
+}
+
+
+public void SaveGameState(string userId, int amount, int gamesPlayed, int wins, int loses)
+{
+
+    if (DBreference != null)
+    {
+        StartCoroutine(Amount(userId, amount));
+        StartCoroutine(GamesPlayed(userId,gamesPlayed)); ;
+        StartCoroutine(Wins(userId, wins));
+        StartCoroutine(Loses(userId, loses));
+    }
+    else
+    {
+        Debug.LogError("Database reference is null!");
+    }
+
+}
+*/
+

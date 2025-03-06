@@ -1308,6 +1308,8 @@ MonoBehaviour:
   - {fileID: 1008504842}
   - {fileID: 703389899}
   cardIndex: 0
+  playerHand: 0000000000000000
+  dealerCard: 0
 --- !u!1 &420751956
 GameObject:
   m_ObjectHideFlags: 0
@@ -3133,6 +3135,7 @@ MonoBehaviour:
   playerScript: {fileID: 1633346123}
   dealerScript: {fileID: 366351996}
   betManager: {fileID: 283515847}
+  firstAction: 1
 --- !u!4 &1016131656
 Transform:
   m_ObjectHideFlags: 0
@@ -4123,6 +4126,8 @@ MonoBehaviour:
   - {fileID: 1436239894}
   - {fileID: 420751956}
   cardIndex: 0
+  playerHand: 0000000000000000
+  dealerCard: 0
 --- !u!1 &1641742238
 GameObject:
   m_ObjectHideFlags: 0
@@ -4198,6 +4203,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1641742238}
   m_CullTransparentMesh: 1
+--- !u!1 &1654652253
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1654652255}
+  - component: {fileID: 1654652254}
+  m_Layer: 0
+  m_Name: FirestoreManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1654652254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654652253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 506525826cab54c3e8ab2ccfa667b1e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1654652255
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654652253}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.2169469, y: -0.25606543, z: 62.650436}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1729177585
 GameObject:
   m_ObjectHideFlags: 0
@@ -4774,3 +4823,4 @@ SceneRoots:
   - {fileID: 1633346122}
   - {fileID: 150972268}
   - {fileID: 366351995}
+  - {fileID: 1654652255}

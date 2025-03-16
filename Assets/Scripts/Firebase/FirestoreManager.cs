@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using Firebase.Firestore;
 using Unity.VisualScripting;
 using UnityEngine;
+
 
 public class FirestoreManager : MonoBehaviour
 {
@@ -28,7 +30,7 @@ public class FirestoreManager : MonoBehaviour
 
     public void SaveGameData(int[] playerHand, int dealerCard, string action, string outcome)
     {
-        FirebaseUser user = FirebaseManager.Instance.GetCurrentUser();
+        FirebaseUser user = FirebaseAuthManager.Instance.GetCurrentUser();
 
         if (user == null)
         {
@@ -38,7 +40,7 @@ public class FirestoreManager : MonoBehaviour
 
         string userId = user.UserId;
         // Reference to the user's rounds subcollection
-        DocumentReference userDocRef = db.Collection("games").Document(userId);
+        DocumentReference userDocRef = db.Collection("users").Document(userId);
         CollectionReference roundsRef = userDocRef.Collection("rounds");
 
         // Auto - generate a unique round ID
@@ -65,5 +67,86 @@ public class FirestoreManager : MonoBehaviour
                 Debug.LogError("Error saving round data: " + task.Exception);
             }
         });
+    }
+
+    public void SaveUserData(int amount, int games, int wins, int loses)
+    {
+
+        FirebaseUser user = FirebaseAuthManager.Instance.GetCurrentUser();
+
+        if (user == null)
+        {
+            Debug.LogError("User not logged in!");
+            return;
+        }
+
+        string userId = user.UserId;
+        // Reference to the user's rounds subcollection
+        DocumentReference userDocRef = db.Collection("users").Document(userId);
+        CollectionReference userDataRef = userDocRef.Collection("userData");
+
+        DocumentReference newUserData = userDataRef.Document("data");
+
+        Dictionary<string, object> userData = new Dictionary<string, object>
+        {
+            { "amount", amount },
+            { "games", games },
+            { "wins", wins },
+            { "loses", loses },
+            
+        };
+
+        newUserData.SetAsync(userData, SetOptions.MergeAll).ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("User data saved successfully with ID: " + newUserData.Id);
+            }
+            else
+            {
+                Debug.LogError("Error saving User Data: " + task.Exception);
+            }
+        });
+
+    }
+
+    public void LoadUserData()
+    {
+
+        FirebaseUser user = FirebaseAuthManager.Instance.GetCurrentUser();
+
+        if (user == null)
+        {
+            Debug.LogError("User not logged in!");
+            return;
+        }
+
+        string userId = user.UserId;
+
+        UserData.amount = 10000;
+        UserData.games = 0;
+        UserData.wins = 0;
+        UserData.loses = 0;
+
+        DocumentReference dataRef = db.Collection("users").Document(userId).Collection("userData").Document("data");
+        dataRef.GetSnapshotAsync().ContinueWith((task) =>
+        {
+            var snapshot = task.Result;
+            if (snapshot.Exists)
+            {
+                UserData.amount = snapshot.GetValue<int>("amount");
+                UserData.games = snapshot.GetValue<int>("games");
+                UserData.wins = snapshot.GetValue<int>("wins");
+                UserData.loses = snapshot.GetValue<int>("loses");
+            }
+
+            else
+            {
+                Debug.Log(String.Format("Document {0} does not exist!", snapshot.Id));
+            }
+        });
+        
+
+
     }
 }

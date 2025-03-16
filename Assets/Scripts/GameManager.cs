@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     //Game buttons
-    public Button dealBtn, hitBtn, standBtn; 
+    public Button dealBtn, hitBtn, standBtn, doubleBtn; 
     public Button bet10Btn, bet50Btn, bet100Btn, bet200Btn;
     public Text scoreText, dealerScoreText,mainText;
     public GameObject hideCard;
@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void loadUSerData()
     {
+        FirestoreManager.Instance.LoadUserData();
         playerScript.SetMoney(UserData.amount);
         betManager.UpdateUI();
     }
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
         dealBtn.onClick.AddListener(DealClicked);
         hitBtn.onClick.AddListener(HitClicked);
         standBtn.onClick.AddListener(StandClicked);
+        doubleBtn.onClick.AddListener(Doublelicked);
 
         bet10Btn.onClick.AddListener(() => betManager.PlaceBet(10));
         bet50Btn.onClick.AddListener(() => betManager.PlaceBet(50));
@@ -70,7 +72,6 @@ public class GameManager : MonoBehaviour
         UserData.userHand = playerScript.playerHand;
         UserData.dealerCard = dealerScript.dealerHand;
         UserData.games += 1;
-
 
         // Update the score display
         UpdateScoreUI();
@@ -104,6 +105,23 @@ public class GameManager : MonoBehaviour
             firstAction = false;
         }
         DealerTurn();
+    }
+
+    private void Doublelicked()
+    {
+        playerScript.AdjustMoney(-(betManager.Pot / 2));
+        betManager.DoublePot();
+        if (firstAction)
+        {
+            UserData.userAction = "Stand";
+            firstAction = false;
+        }
+        DealerTurn();
+    }
+
+    private void SplitClicked()
+    {
+
     }
 
     private void DealerTurn()
@@ -162,10 +180,8 @@ public class GameManager : MonoBehaviour
             {
                 mainText.text = "Blackjack!! You Win";
                 playerScript.AdjustMoney(betManager.Pot);
-                if(UserData.userAction == null)
-                {
-                    UserData.userAction = "User Blackjack";
-                }
+
+                UserData.userAction ??= "User Blackjack";
                 UserData.outcome = "Win";
                 UserData.wins += 1;
                 UserData.amount = playerScript.GetMoney();
@@ -233,6 +249,7 @@ public class GameManager : MonoBehaviour
         {
             roundSaved = true;
             FirestoreManager.Instance.SaveGameData(UserData.userHand, UserData.dealerCard[0], UserData.userAction, UserData.outcome);
+            FirestoreManager.Instance.SaveUserData(UserData.amount,UserData.games, UserData.wins, UserData.loses);
             //FirebaseManager.Instance.SaveGameState(UserData.userId, UserData.amount, UserData.games, UserData.wins, UserData.loses);
             ResetRound();
         }
@@ -261,6 +278,7 @@ public class GameManager : MonoBehaviour
         dealBtn.gameObject.SetActive(!enabled);
         hitBtn.gameObject.SetActive(enabled);
         standBtn.gameObject.SetActive(enabled);
+        doubleBtn.gameObject.SetActive(enabled);
 
         bet10Btn.enabled = !enabled;
         bet50Btn.enabled = !enabled;

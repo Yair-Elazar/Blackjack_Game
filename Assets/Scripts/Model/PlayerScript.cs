@@ -11,6 +11,7 @@ public class PlayerScript : MonoBehaviour
 
     // Total value of player/dealer's hand
     public int handValue = 0;
+    public int handValue2 = 0; // spilt
 
     // Betting money
     private int money = 0;

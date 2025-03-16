@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class BetManager : MonoBehaviour
 {
     public PlayerScript playerScript;
@@ -10,7 +11,6 @@ public class BetManager : MonoBehaviour
 
     public BetManager()
     {
-        
         Pot = 0;
     }
 

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using Firebase.Firestore;
 using System;
 
-public class FirebaseManager : MonoBehaviour
+public class FirebaseAuthManager : MonoBehaviour
 {
 
     // Firebase variable
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
-    public static FirebaseManager Instance { get; private set; }
+    public static FirebaseAuthManager Instance { get; private set; }
     public FirebaseAuth auth;
     public FirebaseUser user;
     public DatabaseReference DBreference;
@@ -34,15 +34,6 @@ public class FirebaseManager : MonoBehaviour
     public InputField emailRegisterField;
     public InputField passwordRegisterField;
     public InputField confirmPasswordRegisterField;
-
-    [Space]
-    [Header("UserData")]
-    private InputField userName;
-    private Text userAmount;
-    private Text userGamesPlayed;
-    private Text userWins;
-    private Text userLoses;
-
 
     private void Awake()
     {

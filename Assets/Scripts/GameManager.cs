@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     //Game buttons
-    public Button dealBtn, hitBtn, standBtn, doubleBtn; 
+    public Button dealBtn, hitBtn, standBtn, doubleBtn, splitBtn; 
     public Button bet10Btn, bet50Btn, bet100Btn, bet200Btn;
     public Text scoreText, dealerScoreText,mainText;
     public GameObject hideCard;
@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
         hitBtn.onClick.AddListener(HitClicked);
         standBtn.onClick.AddListener(StandClicked);
         doubleBtn.onClick.AddListener(Doublelicked);
+        //splitBtn.onClick.AddListener(SplitClicked);
 
         bet10Btn.onClick.AddListener(() => betManager.PlaceBet(10));
         bet50Btn.onClick.AddListener(() => betManager.PlaceBet(50));
@@ -52,6 +53,13 @@ public class GameManager : MonoBehaviour
         hitBtn.gameObject.SetActive(false);
         standBtn.gameObject.SetActive(false);
     }
+
+    /*
+    private void SplitClicked()
+    {
+        playerScript.split();
+    }
+    */
 
     private void DealClicked()
     {
@@ -117,11 +125,6 @@ public class GameManager : MonoBehaviour
             firstAction = false;
         }
         DealerTurn();
-    }
-
-    private void SplitClicked()
-    {
-
     }
 
     private void DealerTurn()

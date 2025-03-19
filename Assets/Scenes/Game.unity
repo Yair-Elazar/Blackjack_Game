@@ -1500,7 +1500,7 @@ MonoBehaviour:
   cardScript: {fileID: 132873125}
   deckScript: {fileID: 1142578657}
   handValue: 0
-  handValue2: 0
+  hasSplit: 0
   hand:
   - {fileID: 985994819}
   - {fileID: 1729177585}
@@ -1510,6 +1510,7 @@ MonoBehaviour:
   - {fileID: 621533018}
   - {fileID: 1008504842}
   - {fileID: 703389899}
+  hand2: []
   cardIndex: 0
   playerHand: 0000000000000000
   playerCardIndex: 0
@@ -2094,7 +2095,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &557601429
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3647,6 +3648,7 @@ MonoBehaviour:
   hitBtn: {fileID: 466164579}
   standBtn: {fileID: 1958608955}
   doubleBtn: {fileID: 1151895792}
+  splitBtn: {fileID: 557601430}
   bet10Btn: {fileID: 696400534}
   bet50Btn: {fileID: 1169856731}
   bet100Btn: {fileID: 743873353}
@@ -4839,7 +4841,7 @@ MonoBehaviour:
   cardScript: {fileID: 132873125}
   deckScript: {fileID: 1142578657}
   handValue: 0
-  handValue2: 0
+  hasSplit: 0
   hand:
   - {fileID: 132873122}
   - {fileID: 1175026113}
@@ -4849,6 +4851,9 @@ MonoBehaviour:
   - {fileID: 62988496}
   - {fileID: 1436239894}
   - {fileID: 420751956}
+  hand2:
+  - {fileID: 377499565}
+  - {fileID: 412957610}
   cardIndex: 0
   playerHand: 0000000000000000
   playerCardIndex: 0

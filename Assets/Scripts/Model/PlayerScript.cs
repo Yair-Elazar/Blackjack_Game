@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,11 +12,10 @@ public class PlayerScript : MonoBehaviour
 
     // Total value of player/dealer's hand
     public int handValue = 0;
-    public int handValue2 = 0; // spilt
 
-    // Betting money
     private int money = 0;
 
+    public bool hasSplit = false;
     // Array of card object on table
     public GameObject[] hand;
 
@@ -52,17 +52,14 @@ public class PlayerScript : MonoBehaviour
                 playerHand[playerCardIndex] = cardValue;
                 playerCardIndex++;
             }
-            
         }
         else
         {
             dealerHand[dealerCardIndex] = cardValue;
             dealerCardIndex++;
         }
-
-        // Add card value to runnig total of the hand
+        
         handValue += cardValue;
-        // If value is 1, it is an ace
         if (cardValue == 1)
         {
             aceList.Add(hand[cardIndex].GetComponent<CardScript>());
@@ -128,4 +125,16 @@ public class PlayerScript : MonoBehaviour
         playerHand = new int[2];
         dealerHand = new int[12];
     }
+
+    /*
+    public void split()
+    {
+        hasSplit = !hasSplit;
+        if (hasSplit)
+        {
+            int cardValue2 = deckScript.DealCard(hand2[0].GetComponent<CardScript>());
+            hand2[0].GetComponent<Renderer>().enabled = true;
+        }
+    }
+    */
 }

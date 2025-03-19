@@ -1,7 +1,8 @@
 # Blackjack_Game
 A 2D Blackjack game built in Unity where a single player competes against a dealer. The game follows classic blackjack rules, allowing players to hit, stand, double down, and split hands.
 
- Features
+🎮 Features
+
 ✅ Card deck system with shuffling and dealing logic
 ✅ Betting system with adjustable bet amounts
 ✅ Game actions: Hit, Stand, Double Down, and Split
@@ -11,12 +12,14 @@ A 2D Blackjack game built in Unity where a single player competes against a deal
 ✅ Firebase integration for storing user data
 
 Technologies Used:
+
 Unity (Game development)
 C# (Game logic and scripts)
 Firebase Firestore (Player data storage)
 Firebase Authentication (User login and data retrieval)
 
 📥 Installation & Setup
+
 1.Clone the repository
    git clone https://github.com/ShlomoYalo/Blackjack_Game.git
    cd Blackjack_Game
@@ -35,6 +38,7 @@ Firebase Authentication (User login and data retrieval)
    Build the game for Windows/macOS/WebGL
 
 🕹️ How to Play
+
   1.Place a bet before starting a round
   2.Click Deal to receive your cards
   3.Choose an action:
@@ -47,9 +51,11 @@ Firebase Authentication (User login and data retrieval)
   6.Your winnings are updated, and you can start a new round
 
 📄 License
+
 This project is open-source and available under the MIT License.
 
 👨‍💻 Developer
+
 Created by ShlomoYalo
 
 

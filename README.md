@@ -37,26 +37,26 @@ Technologies Used:
 
   2 . Ensure you have Unity 2021+ installed
   
-    Open the project from Unity Hub
-    Set up Firebase (Optional, if using database features)
+   Open the project from Unity Hub
+   Set up Firebase (Optional, if using database features)
 
   3 . Create a Firebase project
   
-    Enable Firestore for storing player data
-    Download google-services.json and place it in Assets/StreamingAssets/
+   Enable Firestore for storing player data
+   Download google-services.json and place it in Assets/StreamingAssets/
 
   4. Run the game
   
-    Click Play in Unity Editor
-    Build the game for Windows/macOS/WebGL
+   Click Play in Unity Editor
+   Build the game for Windows/macOS/WebGL
 
 🕹️ How to Play
 
-     1. Place a bet before starting a round
+   1. Place a bet before starting a round
 
-     2. Click Deal to receive your cards
+   2. Click Deal to receive your cards
 
-    3. Choose an action:
+   3. Choose an action:
     
       Hit → Draw another card.
       Stand → Keep your current hand.

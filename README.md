@@ -59,15 +59,18 @@ Technologies Used:
    3. Choose an action:
     
       Hit → Draw another card.
+      
       Stand → Keep your current hand.
+      
       Double Down → Double your bet and receive one more card.
+      
       Split → If you have two matching cards, split them into two hands.
 
-  4. The dealer plays after your turn.
+  5. The dealer plays after your turn.
 
-  5. The winner is determined based on classic blackjack rules.
+  6. The winner is determined based on classic blackjack rules.
 
-  6. Your winnings are updated, and you can start a new round.
+  7. Your winnings are updated, and you can start a new round.
  
 📄 License
 

@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
         SetupGame();
     }
 
-    private void loadUSerData()
+    private async void loadUSerData()
     {
-        FirestoreManager.Instance.LoadUserData();
+        await FirestoreManager.Instance.LoadUserData();
         playerScript.SetMoney(UserData.amount);
         betManager.UpdateUI();
     }

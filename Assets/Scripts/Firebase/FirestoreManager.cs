@@ -28,7 +28,7 @@ public class FirestoreManager : MonoBehaviour
     }
 
 
-    public void SaveGameData(int[] playerHand, int dealerCard, string action, string outcome)
+    public async Task SaveGameData(int[] playerHand, int dealerCard, string action, string outcome)
     {
         FirebaseUser user = FirebaseAuthManager.Instance.GetCurrentUser();
 
@@ -56,20 +56,12 @@ public class FirestoreManager : MonoBehaviour
             { "timestamp", FieldValue.ServerTimestamp }
         };
 
-        newRoundRef.SetAsync(roundData).ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                Debug.Log("Round data saved successfully with ID: " + newRoundRef.Id);
-            }
-            else
-            {
-                Debug.LogError("Error saving round data: " + task.Exception);
-            }
-        });
+       await newRoundRef.SetAsync(roundData); // Use await here to ensure it's done before continuing
+
+        Debug.Log("Round data saved successfully with ID: " + newRoundRef.Id);
     }
 
-    public void SaveUserData(int amount, int games, int wins, int loses)
+    public async Task SaveUserData(int amount, int games, int wins, int loses)
     {
 
         FirebaseUser user = FirebaseAuthManager.Instance.GetCurrentUser();
@@ -82,10 +74,7 @@ public class FirestoreManager : MonoBehaviour
 
         string userId = user.UserId;
         // Reference to the user's rounds subcollection
-        DocumentReference userDocRef = db.Collection("users").Document(userId);
-        CollectionReference userDataRef = userDocRef.Collection("userData");
-
-        DocumentReference newUserData = userDataRef.Document("data");
+         DocumentReference newUserData = db.Collection("users").Document(userId).Collection("userData").Document("data");
 
         Dictionary<string, object> userData = new Dictionary<string, object>
         {
@@ -96,21 +85,19 @@ public class FirestoreManager : MonoBehaviour
             
         };
 
-        newUserData.SetAsync(userData, SetOptions.MergeAll).ContinueWith(task =>
+        try
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                Debug.Log("User data saved successfully with ID: " + newUserData.Id);
-            }
-            else
-            {
-                Debug.LogError("Error saving User Data: " + task.Exception);
-            }
-        });
+            await newUserData.SetAsync(userData, SetOptions.MergeAll);
+            Debug.Log("User data saved successfully with ID: " + newUserData.Id);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error saving User Data: " + e.Message);
+        }
 
     }
 
-    public void LoadUserData()
+    public async Task LoadUserData()
     {
 
         FirebaseUser user = FirebaseAuthManager.Instance.GetCurrentUser();
@@ -123,30 +110,24 @@ public class FirestoreManager : MonoBehaviour
 
         string userId = user.UserId;
 
-        UserData.amount = 10000;
-        UserData.games = 0;
-        UserData.wins = 0;
-        UserData.loses = 0;
-
         DocumentReference dataRef = db.Collection("users").Document(userId).Collection("userData").Document("data");
-        dataRef.GetSnapshotAsync().ContinueWith((task) =>
+
+        DocumentSnapshot snapshot = await dataRef.GetSnapshotAsync(); // חכה שהנתונים ייטענו
+
+        if (snapshot.Exists)
         {
-            var snapshot = task.Result;
-            if (snapshot.Exists)
-            {
-                UserData.amount = snapshot.GetValue<int>("amount");
-                UserData.games = snapshot.GetValue<int>("games");
-                UserData.wins = snapshot.GetValue<int>("wins");
-                UserData.loses = snapshot.GetValue<int>("loses");
-            }
+            UserData.amount = snapshot.ContainsField("amount") ? snapshot.GetValue<int>("amount") : 10000;
+            UserData.games = snapshot.ContainsField("games") ? snapshot.GetValue<int>("games") : 0;
+            UserData.wins = snapshot.ContainsField("wins") ? snapshot.GetValue<int>("wins") : 0;
+            UserData.loses = snapshot.ContainsField("loses") ? snapshot.GetValue<int>("loses") : 0;
 
-            else
-            {
-                Debug.Log(String.Format("Document {0} does not exist!", snapshot.Id));
-            }
-        });
-        
-
+            Debug.Log($"User Data Loaded: Amount={UserData.amount}, Games={UserData.games}, Wins={UserData.wins}, Loses={UserData.loses}");
+        }
+        else
+        {
+            Debug.LogWarning($"Document {snapshot.Id} does not exist! Creating default data...");
+            await SaveUserData(10000, 0, 0, 0); // שמירת נתונים ראשונית אם אין מסמך
+        }
 
     }
 }

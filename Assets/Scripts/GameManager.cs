@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2);
     }
 
-    private void RoundOver(String name)
+    private async void RoundOver(String name)
     {
         if (roundSaved)
         {
@@ -251,9 +251,8 @@ public class GameManager : MonoBehaviour
         if (roundOver)
         {
             roundSaved = true;
-            FirestoreManager.Instance.SaveGameData(UserData.userHand, UserData.dealerCard[0], UserData.userAction, UserData.outcome);
-            FirestoreManager.Instance.SaveUserData(UserData.amount,UserData.games, UserData.wins, UserData.loses);
-            //FirebaseManager.Instance.SaveGameState(UserData.userId, UserData.amount, UserData.games, UserData.wins, UserData.loses);
+            await FirestoreManager.Instance.SaveGameData(UserData.userHand, UserData.dealerCard[0], UserData.userAction, UserData.outcome);
+            await FirestoreManager.Instance.SaveUserData(UserData.amount, UserData.games, UserData.wins, UserData.loses);
             ResetRound();
         }
     }
